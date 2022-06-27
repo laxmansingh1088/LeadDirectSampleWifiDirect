@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/action_disconnect"
+        android:icon="@drawable/icon_disconnect"
+        app:showAsAction="always"
+        android:title="sync">
+    </item>
+
+    <item
+        android:id="@+id/action_sync"
+        android:icon="@drawable/sync_resources"
+        app:showAsAction="always"
+        android:title="sync">
+    </item>
+
+    <item
+        android:id="@+id/action_scan"
+        android:icon="@drawable/icon_qrcode_scanner"
+        app:showAsAction="always"
+        android:title="Scan">
+    </item>
+</menu>

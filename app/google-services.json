@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1041992418819",
+    "project_id": "leaddirectsamplewifidirect",
+    "storage_bucket": "leaddirectsamplewifidirect.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041992418819:android:0cf2adf56d466ca5837036",
+        "android_client_info": {
+          "package_name": "com.example.leaddirectsamplewifidirect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041992418819-hdftfv47n6f9no7bf5n3mt7vnconqj69.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWYJr-MEu8OkL0Y0nxvn6nWmImeZxmUyw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041992418819-hdftfv47n6f9no7bf5n3mt7vnconqj69.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
