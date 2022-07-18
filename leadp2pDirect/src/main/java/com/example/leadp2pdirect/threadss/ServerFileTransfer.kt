@@ -6,9 +6,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import com.example.leadp2pdirect.P2PCallBacks
-import com.example.leadp2pdirect.constants.Constants
 import com.example.leadp2pdirect.servers.FileDownloadUploadProgresssModel
 import com.example.leadp2pdirect.servers.FileHelper
 import com.example.leadp2pdirect.servers.FileHelper.deleteDir

@@ -5,6 +5,7 @@ import android.net.wifi.p2p.WifiP2pManager
 
 object Constants {
      const val FILE_TRANSFER_PORT = 9999
+     const val CHAT_PORT = 8050
      val p2pIntentFilter = IntentFilter().apply {
         addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
         addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)

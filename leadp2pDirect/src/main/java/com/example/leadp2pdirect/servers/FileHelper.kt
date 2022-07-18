@@ -35,7 +35,7 @@ object FileHelper {
         }
     }
 
-     fun getFileModelsListFromUris(
+    fun getFileModelsListFromUris(
         uris: ArrayList<Uri>,
         cr: ContentResolver
     ): ArrayList<FileModel>? {
@@ -53,12 +53,14 @@ object FileHelper {
             val fileModel = FileModel()
             fileModel.fileName = fileName
             fileModel.fileLength = fileLength
-            fileModel.mimeType = mimeType
+            fileModel.mimeType = mimeType  //audio/mpeg
             if (mimeType != null) {
                 if (mimeType.contains("image")) {
                     fileModel.type = FileModel.TYPE_PHOTO
                 } else if (mimeType.contains("video")) {
                     fileModel.type = FileModel.TYPE_VIDEO
+                } else if (mimeType.contains("audio")) {
+                    fileModel.type = FileModel.TYPE_AUDIO
                 } else if (mimeType.contains("pdf")) {
                     fileModel.type = FileModel.TYPE_PDF
                 } else if (mimeType.contains("application/vnd.android.package-archive")) {

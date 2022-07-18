@@ -44,6 +44,7 @@ import java.io.File
 
 
 class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick {
+    private var TAG = "MainActivity.kt"
     private var doubleBackToExitPressedOnce = false
     private lateinit var binding: ActivityMainBinding
     private var leadp2pHander: LeadP2PHandler? = null
@@ -285,6 +286,7 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
     }
 
     override fun onDisconnected() {
+        Log.d(TAG, "onDisconnected()")
         leadp2pHander?.startPeersDiscovery()
     }
 
@@ -309,11 +311,13 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
     }
 
     override fun myDeviceInfo(deviceInfoForQrCode: String) {
-        if (leadp2pHander?.isConnected() == false) {
-            peersList.clear()
-            selectedDevice = null
-            leadp2pHander?.startPeersDiscovery()
-            showAndHideUIIfConnected()
+        leadp2pHander?.getWifiP2pManager()?.requestConnectionInfo(leadp2pHander?.getChannel()) {
+            if (it.groupFormed ==false) {
+                    peersList.clear()
+                    selectedDevice = null
+                    leadp2pHander?.startPeersDiscovery()
+                    showAndHideUIIfConnected()
+            }
         }
     }
 
