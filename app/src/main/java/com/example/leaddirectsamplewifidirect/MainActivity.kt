@@ -2,6 +2,7 @@ package com.example.leaddirectsamplewifidirect
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -37,6 +38,11 @@ import com.example.leadp2pdirect.p2p.MyDeviceInfoForQrCode
 import com.example.leadp2pdirect.servers.FileDownloadUploadProgresssModel
 import com.example.leadp2pdirect.servers.FileHelper.mimeType
 import com.example.leadp2pdirect.servers.FileModel
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
@@ -76,6 +82,39 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
 
         setOnClickListeners()
         setWifiButton()
+        enableLocationSettings()
+    }
+
+
+    protected fun enableLocationSettings() {
+        val locationRequest: LocationRequest = LocationRequest.create()
+            .setInterval(5000)
+            .setFastestInterval(1000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+        LocationServices
+            .getSettingsClient(this)
+            .checkLocationSettings(builder.build())
+            .addOnSuccessListener(
+                this
+            ) { response: LocationSettingsResponse? -> leadp2pHander?.startPeersDiscovery() }
+            .addOnFailureListener(
+                this
+            ) { ex: Exception? ->
+                if (ex is ResolvableApiException) {
+                    // Location settings are NOT satisfied,  but this can be fixed  by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),  and check the result in onActivityResult().
+                        ex.startResolutionForResult(
+                            this@MainActivity,
+                            1007
+                        )
+                    } catch (sendEx: IntentSender.SendIntentException) {
+                        // Ignore the error.
+                    }
+                }
+            }
     }
 
 
@@ -312,11 +351,11 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
 
     override fun myDeviceInfo(deviceInfoForQrCode: String) {
         leadp2pHander?.getWifiP2pManager()?.requestConnectionInfo(leadp2pHander?.getChannel()) {
-            if (it.groupFormed ==false) {
-                    peersList.clear()
-                    selectedDevice = null
-                    leadp2pHander?.startPeersDiscovery()
-                    showAndHideUIIfConnected()
+            if (it.groupFormed == false) {
+                peersList.clear()
+                selectedDevice = null
+                leadp2pHander?.startPeersDiscovery()
+                showAndHideUIIfConnected()
             }
         }
     }
