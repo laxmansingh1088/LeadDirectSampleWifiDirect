@@ -84,7 +84,9 @@ class ChatClient(
             while (socket != null) {
                 try {
                     bytes = inputStream!!.read(buffer)
-
+                    if (bytes == -1) {
+                        throw IOException()
+                    }
                     if (bytes > 0) {
                         val finalbytes = bytes
                         handler.post {
