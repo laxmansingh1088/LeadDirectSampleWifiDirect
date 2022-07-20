@@ -29,6 +29,7 @@ import com.example.leadp2p.p2p.PeerDevice
 import com.example.leadp2pdirect.P2PCallBacks
 import com.example.leadp2pdirect.chatmessages.ChatCommands
 import com.example.leadp2pdirect.chatmessages.ResourceSyncCommand
+import com.example.leadp2pdirect.chatmessages.TextMessage
 import com.example.leadp2pdirect.chatmessages.VideoCommands
 import com.example.leadp2pdirect.chatmessages.constants.ChatType
 import com.example.leadp2pdirect.chatmessages.enumss.TransferStatus
@@ -50,6 +51,7 @@ import java.io.File
 
 
 class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick {
+    private var isScanScreenOpened: Boolean = false
     private var TAG = "MainActivity.kt"
     private var doubleBackToExitPressedOnce = false
     private lateinit var binding: ActivityMainBinding
@@ -128,6 +130,16 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
         )
     }
 
+
+    fun tempCreateTextMessage(message: String?): ChatCommands {
+        val textMessage = message?.let { TextMessage(it) }
+        return ChatCommands(
+            ChatType.TEXT_CHAT_TYPE,
+            TransferStatus.SENT,
+            textMessage = textMessage
+        )
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu);
         return true
@@ -137,6 +149,7 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_scan -> {
+                isScanScreenOpened = true
                 QRScanner.scan(this)
                 true
             }
@@ -249,7 +262,9 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
 
         binding.buttonChat.setOnClickListener(View.OnClickListener {
             selectedDevice.let {
-                leadp2pHander?.sendMessage("hello", it)
+                val textMessage = tempCreateTextMessage("hello ${(1..50).random()}")
+                val info = Gson().toJson(textMessage)
+                leadp2pHander?.sendMessage(info.toString(), selectedDevice)
             }
         })
     }
@@ -278,13 +293,15 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
     /* register the broadcast receiver with the intent values to be matched */
     override fun onResume() {
         super.onResume()
+        isScanScreenOpened = false
         leadp2pHander?.registerReceiver()
     }
 
     /* unregister the broadcast receiver */
     override fun onPause() {
         super.onPause()
-        leadp2pHander?.unRegisterReceiver()
+        if (!isScanScreenOpened)
+            leadp2pHander?.unRegisterReceiver()
     }
 
     //............... Library method callbacks.............................
@@ -382,8 +399,10 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
 
 
     override fun onItemClick(position: Int) {
-        peersList.get(position).let {
-            leadp2pHander?.connect(it)
+        if (position <= peersList.size - 1) {
+            peersList.get(position).let {
+                leadp2pHander?.connect(it)
+            }
         }
     }
 
@@ -391,6 +410,7 @@ class MainActivity : AppCompatActivity(), P2PCallBacks, OnRecyclerViewItemClick 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (data == null) return
         when (requestCode) {
             ChooseFile.FILE_TRANSFER_CODE -> {
                 if (data == null) return

@@ -20,6 +20,7 @@ import java.io.*
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketException
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 
@@ -39,10 +40,15 @@ class ChatClient(
 
     fun sendMessage(message: BaseMessage) {
         GlobalScope.launch(Dispatchers.IO) {
-            if (outputStream != null) {
-                val messageByteArray = message.serialize().toByteArray()
-                outputStream?.write(messageByteArray)
-                outputStream?.flush()
+            try {
+                if (outputStream != null) {
+                    val messageByteArray = message.serialize().toByteArray()
+                    outputStream?.write(messageByteArray)
+                    outputStream?.flush()
+                }
+            } catch (e: SocketException) {
+                e.message?.let { Log.d(TAG, it) }
+                cleanAndRestartChatClient()
             }
         }
     }
@@ -78,6 +84,7 @@ class ChatClient(
             while (socket != null) {
                 try {
                     bytes = inputStream!!.read(buffer)
+
                     if (bytes > 0) {
                         val finalbytes = bytes
                         handler.post {
